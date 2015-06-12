@@ -72,6 +72,7 @@ function setupAudioNodes() {
     sourceNode.connect(analyser)
 }
 
+// updates frequency data and graphics
 function processAudio(audioProcessingEvent) {
     // get the average amplitude across bins, bincount is fftsize / 2
     var array =  new Uint8Array(analyser.frequencyBinCount);
@@ -83,6 +84,12 @@ function processAudio(audioProcessingEvent) {
     canvasContext.fillStyle = gradient;
     canvasContext.fillRect(0, 130 - average, 25, 130);
 
+    // output the audio
+    outputAudio(audioProcessingEvent);
+};
+
+// routes input buffer of analyser node to output
+function outputAudio(audioProcessingEvent) {
     var inputBuffer = audioProcessingEvent.inputBuffer;
     var outputBuffer = audioProcessingEvent.outputBuffer;
     for(var channel = 0; channel < outputBuffer.numberOfChannels; channel++) {
@@ -92,8 +99,9 @@ function processAudio(audioProcessingEvent) {
             outputData[sample] = inputData[sample];
         }
     }
-};
+}
 
+// compute average amplitude of data in array
 function getAverageAmplitude(array) {
     var sum = 0;
     var length = array.length;

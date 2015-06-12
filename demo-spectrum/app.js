@@ -72,6 +72,7 @@ function setupAudioNodes() {
     sourceNode.connect(analyser)
 }
 
+// updates frequency data and graphics
 function processAudio(audioProcessingEvent) {
     // get data
     var array = new Uint8Array(analyser.frequencyBinCount);
@@ -82,6 +83,12 @@ function processAudio(audioProcessingEvent) {
     canvasContext.fillStyle = gradient;
     drawSpectrum(array)
 
+    // output the audio
+    outputAudio(audioProcessingEvent);
+};
+
+// routes input buffer of analyser node to output
+function outputAudio(audioProcessingEvent) {
     var inputBuffer = audioProcessingEvent.inputBuffer;
     var outputBuffer = audioProcessingEvent.outputBuffer;
     for(var channel = 0; channel < outputBuffer.numberOfChannels; channel++) {
