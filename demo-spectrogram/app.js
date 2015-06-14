@@ -34,6 +34,26 @@ setup()
 
 window.addEventListener('resize', resizeCanvas, false);
 
+function processURL() {
+    var url = 'https://api.soundcloud.com/resolve.json'
+    url += '?url=' + document.getElementById('url').value
+    url += '&client_id=' + ''
+    var request = new XMLHttpRequest();
+    request.onreadystatechange = function() {
+        if(request.readyState == 4 && request.status == 200) {
+            var track = JSON.parse(request.responseText);
+            var streamURL = track['stream_url']
+            audio_player.src = URL.createObjectURL(file);
+
+            // load the sound
+            setupAudioNodes();
+            loadSoundFromURL(file) // TODO
+        }
+    }
+    request.open("get", url, true);
+    request.send();
+}
+
 function resizeCanvas() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
