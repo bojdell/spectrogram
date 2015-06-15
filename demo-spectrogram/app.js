@@ -14,6 +14,9 @@ var canvas;
 var tempCanvas;
 var playStopButton;
 
+// put SoundCloud client ID here
+var CLIENT_ID = ''
+
 function setup() {
     canvas = document.getElementById('canvas');
     canvas.width = window.innerWidth;
@@ -37,20 +40,35 @@ window.addEventListener('resize', resizeCanvas, false);
 function processURL() {
     var url = 'https://api.soundcloud.com/resolve.json'
     url += '?url=' + document.getElementById('url').value
-    url += '&client_id=' + ''
+    url += '&client_id=' + CLIENT_ID
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
         if(request.readyState == 4 && request.status == 200) {
             var track = JSON.parse(request.responseText);
-            var streamURL = track['stream_url']
-            audio_player.src = URL.createObjectURL(file);
+            var streamUrl = track['stream_url'] + '?client_id=' + CLIENT_ID
+            audio_player.src = streamUrl;
 
-            // load the sound
             setupAudioNodes();
-            loadSoundFromURL(file) // TODO
+            loadSoundFromURL(streamUrl);
         }
     }
     request.open("get", url, true);
+    request.send();
+}
+
+function loadSoundFromURL(url) {
+    var request = new XMLHttpRequest();
+    request.open('GET', url, true);
+    request.responseType = 'arraybuffer';
+
+    request.onreadystatechange = function() {
+        if(request.readyState == 4 && request.status == 200) {
+            audioContext.decodeAudioData(request.response, function(buffer) {
+                // when the audio is decoded play the sound
+                playSound(buffer);
+            }, onError);
+        }
+    }
     request.send();
 }
 
@@ -174,6 +192,7 @@ function playSound(buffer) {
     audioBuffer = buffer;
     sourceNode.buffer = buffer;
     sourceNode.start(0);
+    console.log(sourceNode)
     isPlaying = true;
 }
 
