@@ -11,8 +11,16 @@
 		<audio id="audio_player"></audio>
 		<input id="url" type="text">
 		<button id="play-url-button" onclick="processURL()">Use URL</button>
+		<div id="track-info">
+			<!-- TODO: add Angular? -->
+			<img id="track-thumbnail"></img>
+			<a id="track-link"><span id="track-title"></span></a>
+			 by 
+			<a id="artist-link"><span id="track-artist"></span></a>
+		</div>
         <canvas id="canvas"></canvas>
     </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="chroma.js" type="text/javascript"></script>
     <script src="app.js" type="text/javascript"></script>
 </body>

@@ -14,8 +14,15 @@ var canvas;
 var tempCanvas;
 var playStopButton;
 
-// put SoundCloud client ID here
-var CLIENT_ID = ''
+// SoundCloud client ID
+var CLIENT_ID = '7880c1eea074da712200d5c6267f3d06'
+/* TODO:
+    - add Angular
+    - fix window resizing
+    - add CSS
+    - add datGui?
+    - favicon?
+*/
 
 function setup() {
     canvas = document.getElementById('canvas');
@@ -30,7 +37,6 @@ function setup() {
     tempCanvas.width=canvas.width;
     tempCanvas.height=canvas.height;
     tempCanvasContext = tempCanvas.getContext('2d');
-    console.log('setup')
 }
 
 setup()
@@ -46,14 +52,29 @@ function processURL() {
         if(request.readyState == 4 && request.status == 200) {
             var track = JSON.parse(request.responseText);
             var streamUrl = track['stream_url'] + '?client_id=' + CLIENT_ID
+            audio_player.crossOrigin = 'anonymous';
             audio_player.src = streamUrl;
 
             setupAudioNodes();
             loadSoundFromURL(streamUrl);
+            loadUI(track);
         }
     }
     request.open("get", url, true);
     request.send();
+}
+
+function loadUI(track) {
+    console.log(track);
+    $('#track-thumbnail').attr('src', toHttps(track.artwork_url));
+    $('#track-title').text(track.title);
+    $('#track-artist').text(track.user.username);
+    $('#track-link').attr('href', toHttps(track.permalink_url));
+    $('#artist-link').attr('href', toHttps(track.user.permalink_url));
+}
+
+function toHttps(url) {
+    return url.replace(/^http:\/\//i, 'https://');
 }
 
 function loadSoundFromURL(url) {
