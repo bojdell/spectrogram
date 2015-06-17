@@ -69,7 +69,7 @@ function loadUI(track) {
     $('#track-thumbnail').attr('src', toHttps(track.artwork_url));
     $('#track-title').text(track.title);
     $('#track-artist').text(track.user.username);
-    $('#track-link').attr('href', toHttps(track.permalink_url));
+    $('.track-link').attr('href', toHttps(track.permalink_url));
     $('#artist-link').attr('href', toHttps(track.user.permalink_url));
 }
 
