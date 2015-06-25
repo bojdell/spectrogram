@@ -2,6 +2,11 @@
 var canvasContext;
 var tempCanvasContext;
 var gradient;
+var mustang = {
+    // colors: ['#000000', '#263248', '#7E8AA2', '#FFFFFF', '#FF9800']
+    colors: ['#7E8AA2', '#263248', '#FF9800', '#FFFFFF']
+}
+var colorScheme = mustang;
 
 // audio vars
 var audioContext = new AudioContext();
@@ -105,7 +110,7 @@ function resizeCanvas() {
 }
 
 function initFillStyle() {
-    gradient = new chroma.scale(['#000000', '#ff0000', '#ffff00', '#ffffff']);
+    gradient = new chroma.scale(colorScheme.colors);
 }
 
 window.onLoad = function() {
