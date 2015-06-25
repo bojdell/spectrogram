@@ -16,6 +16,13 @@ var playStopButton;
 
 // SoundCloud client ID
 var CLIENT_ID = '7880c1eea074da712200d5c6267f3d06'
+var track  = {
+    'title': 'Track',
+    'user': {
+        'username': 'Artist'
+    }
+};
+
 /* TODO:
     - add Angular
     - fix window resizing
@@ -23,6 +30,19 @@ var CLIENT_ID = '7880c1eea074da712200d5c6267f3d06'
     - add datGui?
     - favicon?
 */
+
+// init Angular app
+var app = angular.module('myApp', []);
+app.controller('myCtrl', function($scope) {
+    $scope.track = track;
+    $scope.$watch(
+    function() {
+        return track;
+    },
+    function(newValue, oldValue) {
+        $scope.track = track;
+    });
+});
 
 function setup() {
     canvas = document.getElementById('canvas');
@@ -50,28 +70,31 @@ function processURL() {
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
         if(request.readyState == 4 && request.status == 200) {
-            var track = JSON.parse(request.responseText);
+            track = JSON.parse(request.responseText);
+            // var appRoot = $('#container')
+            // var scope = angular.element(appRoot).scope();
+            // scope.$apply(function track = track;
             var streamUrl = track['stream_url'] + '?client_id=' + CLIENT_ID
             audio_player.crossOrigin = 'anonymous';
             audio_player.src = streamUrl;
 
             setupAudioNodes();
             loadSoundFromURL(streamUrl);
-            loadUI(track);
+            // loadUI(track);
         }
     }
     request.open("get", url, true);
     request.send();
 }
 
-function loadUI(track) {
-    console.log(track);
-    $('#track-thumbnail').attr('src', toHttps(track.artwork_url));
-    $('#track-title').text(track.title);
-    $('#track-artist').text(track.user.username);
-    $('.track-link').attr('href', toHttps(track.permalink_url));
-    $('#artist-link').attr('href', toHttps(track.user.permalink_url));
-}
+// function loadUI(track) {
+//     console.log(track);
+//     $('#track-thumbnail').attr('src', toHttps(track.artwork_url));
+//     $('#track-title').text(track.title);
+//     $('#track-artist').text(track.user.username);
+//     $('.track-link').attr('href', toHttps(track.permalink_url));
+//     $('#artist-link').attr('href', toHttps(track.user.permalink_url));
+// }
 
 function toHttps(url) {
     return url.replace(/^http:\/\//i, 'https://');
