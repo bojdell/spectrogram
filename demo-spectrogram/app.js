@@ -29,24 +29,33 @@ var CLIENT_ID = '7880c1eea074da712200d5c6267f3d06'
     - favicon?
 */
 
+$('.spinner').one('transitionend webkitTransitionEnd oTransitionEnd otransitionend MSTransitionEnd', 
+function() {
+    var spinner = $('.spinner');
+    if(spinner.css('opacity') == 0) {
+        spinner.css('display', 'none');
+    }
+});
+
 function setup() {
     canvas = document.getElementById('canvas');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    // canvas.width = window.innerWidth;
+    // canvas.height = window.innerHeight;
     if (canvas.getContext) {
         canvasContext = canvas.getContext('2d');
         initFillStyle()
     }
     tempCanvas = document.createElement('canvas');
     tempCanvas.id = 'temp-canvas';
-    tempCanvas.width=canvas.width;
-    tempCanvas.height=canvas.height;
+    // canvas.width = canvas.scrollWidth;
+    // canvas.height = canvas.scrollHeight;
+    tempCanvas.width = canvas.width;
+    tempCanvas.height = canvas.height;
+
     tempCanvasContext = tempCanvas.getContext('2d');
 }
 
 setup()
-
-window.addEventListener('resize', resizeCanvas, false);
 
 function processURL() {
     var url = 'https://api.soundcloud.com/resolve.json'
@@ -103,11 +112,15 @@ function loadSoundFromURL(url) {
     request.send();
 }
 
-function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    canvasContext.drawImage(tempCanvas, 0, 0, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
-}
+// window.addEventListener('resize', resizeCanvas, false);
+
+// function resizeCanvas() {
+//     canvas.width = window.innerWidth;
+//     canvas.height = window.innerHeight;
+//     tempCanvas.width = canvas.width;
+//     tempCanvas.height = canvas.height;
+//     canvasContext.drawImage(tempCanvas, 0, 0, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
+// }
 
 function initFillStyle() {
     gradient = new chroma.scale(colorScheme.colors);
@@ -186,13 +199,19 @@ function outputAudio(audioProcessingEvent) {
 // draws a spectrogram based on the array data
 function drawSpectrogram(array) {
     if(isPlaying) {
-        var canvas = document.getElementById('canvas');
+        if(canvas.scrollWidth != canvas.width || canvas.scrollHeight != canvas.height) {
+            canvas.width = canvas.scrollWidth;
+            canvas.height = canvas.scrollHeight;
+            tempCanvas.width = canvas.width;
+            tempCanvas.height = canvas.height;
+        }
+        canvas = document.getElementById('canvas');
         tempCanvasContext.drawImage(canvas, 0, 0, canvas.width, canvas.height);
 
         // iterate over the array data
         for (var i = 0; i < array.length; i++) {
             // vary color based on the data value
-            var val = array[i]/300;
+            var val = array[i]/(canvas.height + 100);
             canvasContext.fillStyle = gradient(val).hex();
             // draw new data at the right side of the canvas
             canvasContext.fillRect(canvas.width - 1, canvas.height - i, 1, 1);
